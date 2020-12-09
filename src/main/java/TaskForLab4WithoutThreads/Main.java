@@ -3,6 +3,7 @@ package TaskForLab4WithoutThreads;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Timer;
 import java.util.regex.Pattern;
 
 
@@ -14,12 +15,16 @@ public class Main {
         double maxSize=100000000;
 
         TaskManagerWithoutThreads taskManager = new TaskManagerWithoutThreads();
+        long startTime = System.currentTimeMillis();
+
+
         taskManager.setP(pattern);
         taskManager.calculateCountOfSubDirectories(file);
         taskManager.calculateCountOfBigFiles(maxSize,file);
         taskManager.SearchByPattern(file);
 
-
+        long endTime = System.currentTimeMillis();
+        System.out.println("Total execution time: " + (endTime-startTime) + "ms");
         System.out.println(TaskManagerWithoutThreads.getCountOfSubDirectories()+" "+
                 TaskManagerWithoutThreads.getCountOfBigFiles()+" "+
                 TaskManagerWithoutThreads.getCountOfMathFiles());
