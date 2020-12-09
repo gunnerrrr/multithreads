@@ -3,7 +3,6 @@ package TaskForLab4WithoutThreads;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.Timer;
 import java.util.regex.Pattern;
 
 
@@ -11,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException {
         Pattern pattern= Pattern.compile(".+jpg$");
-        File file=new File(String.valueOf(Paths.get("/Users/mac/Desktop/re/Users/max/Samsung")));
+        File file=new File(String.valueOf(Paths.get("C:\\Users\\Admin")));
         double maxSize=100000000;
 
         TaskManagerWithoutThreads taskManager = new TaskManagerWithoutThreads();

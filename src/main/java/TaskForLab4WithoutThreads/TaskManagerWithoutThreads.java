@@ -48,7 +48,7 @@ public class TaskManagerWithoutThreads {
         if (list != null)
             for (File fil : list) {
                 if (fil.isDirectory()) {
-                    System.out.println(true);
+//                    System.out.println(true);
                     countOfSubDirectories++;
                     calculateCountOfSubDirectories(fil);
                 }
@@ -75,22 +75,26 @@ public class TaskManagerWithoutThreads {
 
     public synchronized void SearchByPattern(File topDirectory) {
         File[] list = topDirectory.listFiles();
-        for (int i = 0; i < list.length; i++) {
-            System.out.println(list[i].getName());
+        if (list != null) {
+            for (int i = 0; i < list.length; i++) {
+    //            System.out.println(list[i].getName());
 
-            if (list[i].isDirectory()) {
-                if (accept(list[i].getName())) {
-                    countOfMathFiles++;
+                if (list[i].isDirectory()) {
+                    if (accept(list[i].getName())) {
+                        countOfMathFiles++;
 
+                    }
+                    SearchByPattern(list[i]);
+
+                } else {
+                    if (accept(list[i].getName())) {
+                        countOfMathFiles++;
+                    }
                 }
-                SearchByPattern(list[i]);
-
             }
-            else {
-                if (accept(list[i].getName())) {
-                    countOfMathFiles++;
-                }
-            }
+        }
+        else {
+            return;
         }
     }
 }

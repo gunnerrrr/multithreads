@@ -1,8 +1,8 @@
 package TaskLab4;
 
 import java.io.File;
-import java.util.*;
-import java.util.concurrent.FutureTask;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,7 +16,7 @@ public class TaskManager {
     private Matcher m = null;
     private File file=null;
     private double size=0;
-//    List<Thread> threads = new ArrayList<>();
+    public static List<Thread> threads = new ArrayList<>();
 
 
     public File getFile() {
@@ -66,21 +66,46 @@ public class TaskManager {
             return false;
     }
 
-    public synchronized int calculateCountOfSubDirectories(File file) throws InterruptedException {
+    public synchronized void calculateCountOfSubDirectories(File file, Thread thread, ArrayList<Thread> threads) throws InterruptedException {
+        System.out.println(thread.getName()+thread.getState()+thread.isAlive());
+        thread.start();
+        this.threads.add(thread);
+        System.out.println(thread.getName()+thread.getState()+thread.isAlive());
+//        threadMonitor.repaint(threads.size());
         File[] list = file.listFiles();
-        if (list != null)
+        if (list != null) {
             for (File fil : list) {
+                if (fil.length() > size) {
+                    countOfBigFiles++;
+                }
+                if (accept(fil.getName())) {
+                    countOfMathFiles++;
+                }
+
                 if (fil.isDirectory()) {
                     countOfSubDirectories++;
+                    boolean isFreeThread = false;
+                    Thread newThread = null;
+                    //Map<Integer,Integer> map =new HashMap<>();
+                    for (int i = 0; i < threads.size(); i++) {
+                        if (!(threads.get(i).isAlive()) && threads.get(i).getState() != Thread.State.TERMINATED) {
+                            isFreeThread = true;
+                            calculateCountOfSubDirectories(fil, threads.get(i),threads);
+                            break;
+                        }
+                    }
+                    if (!isFreeThread) {
+                        newThread = new Thread();
+                        newThread.setName("Thread #" + threads.size());
+                        threads.add(newThread);
+                        calculateCountOfSubDirectories(fil, newThread, threads);
+                    }
 
-                    Map<Integer,Integer> map =new HashMap<>();
-
-
-                    //                    CreateNewThread(maxCountOfThreads);
                 }
 
             }
-        return list.length;
+        }
+        else return;
     }
 
 //    private void CreateNewThread(int maxCountOfThreads) throws InterruptedException {
@@ -104,6 +129,7 @@ public class TaskManager {
                     countOfBigFiles++;
                 }
                 if (fil.isDirectory()) {
+
 //                    CreateNewThread(maxCountOfThreads);
                     calculateCountOfBigFiles(size, fil);
                 }
@@ -113,20 +139,21 @@ public class TaskManager {
 
     public synchronized void SearchByPattern(File topDirectory) throws InterruptedException {
         File[] list = topDirectory.listFiles();
-        for (int i = 0; i < list.length; i++) {
-            System.out.println(list[i].getName());
+        if (list != null) {
+            for (int i = 0; i < list.length; i++) {
+               // System.out.println(list[i].getName());
 
-            if (list[i].isDirectory()) {
-                if (accept(list[i].getName())) {
-                    countOfMathFiles++;
-                }
+                if (list[i].isDirectory()) {
+                    if (accept(list[i].getName())) {
+                        countOfMathFiles++;
+                    }
 //                CreateNewThread(maxCountOfThreads);
-                SearchByPattern(list[i]);
+                    SearchByPattern(list[i]);
 
-            }
-            else {
-                if (accept(list[i].getName())) {
-                    countOfMathFiles++;
+                } else {
+                    if (accept(list[i].getName())) {
+                        countOfMathFiles++;
+                    }
                 }
             }
         }
