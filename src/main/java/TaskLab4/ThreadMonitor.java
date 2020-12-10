@@ -11,8 +11,10 @@ import java.util.List;
 
             public ThreadMonitor() {
                 frame = new JFrame();
+
+
                 JPanel panel = new JPanel();
-                textArea = new JTextArea(20, 40);
+                textArea = new JTextArea(40, 70);
                 JScrollPane scroll = new JScrollPane(textArea,
                         JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                         JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -21,10 +23,10 @@ import java.util.List;
                 panel.add(scroll);
                 frame.add(panel);
                 frame.setLocationRelativeTo(null);
-                frame.setSize(700, 400);
+                frame.setSize(1900, 900);
                 frame.setVisible(true);
             }
-        public String Info() {
+        public String GetInfoAboutThreads() {
             try {
                 StringBuilder sb = new StringBuilder();
                 List<Thread> threads = TaskManager.threads;
@@ -34,7 +36,7 @@ import java.util.List;
                         return (sb.toString() + "\n");
                     }
 
-                    threads.forEach(t -> sb.append("Назва потоку:").append(t.getName()).append("Стан потоку:").append(t.getState()).append("\n"));
+                    threads.forEach(t -> sb.append("Назва потоку: ").append(t.getName()).append("    Пріоритет потоку: ").append(t.getPriority()).append("     Стан потоку:").append(t.getState()).append("\n"));
                     sb.append("Вивід закінчено");
 
                     return (sb.toString() + "\n");
@@ -47,8 +49,8 @@ import java.util.List;
 
         @Override
             public void run() {
-                ActionListener task = evt -> this.textArea.append(Info());
-                javax.swing.Timer timer = new Timer(1000, task);
+                ActionListener actionListener = actionEvent -> textArea.append(GetInfoAboutThreads());
+                javax.swing.Timer timer = new Timer(100, actionListener);
                 timer.setRepeats(true);
                 timer.start();
                 }

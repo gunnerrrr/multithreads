@@ -8,19 +8,19 @@ import java.util.regex.Pattern;
 
 public class Main {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         Pattern pattern= Pattern.compile(".+jpg$");
         File file=new File(String.valueOf(Paths.get("C:\\Users\\Admin")));
-        double maxSize=100000000;
+        double maxSize=10000;
 
         TaskManagerWithoutThreads taskManager = new TaskManagerWithoutThreads();
         long startTime = System.currentTimeMillis();
 
 
         taskManager.setP(pattern);
+        taskManager.setSize(maxSize);
         taskManager.calculateCountOfSubDirectories(file);
-        taskManager.calculateCountOfBigFiles(maxSize,file);
-        taskManager.SearchByPattern(file);
+
 
         long endTime = System.currentTimeMillis();
         System.out.println("Total execution time: " + (endTime-startTime) + "ms");

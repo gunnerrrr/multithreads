@@ -1,7 +1,5 @@
 package TaskForLab4WithoutThreads;
 
-import TaskLab4.MyThread;
-
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,6 +11,11 @@ public class TaskManagerWithoutThreads {
 
     private Pattern p;
     private Matcher m = null;
+    private double size;
+
+    public void setSize(double size) {
+        this.size = size;
+    }
 
     public void setP(Pattern p) {
         this.p = p;
@@ -37,16 +40,19 @@ public class TaskManagerWithoutThreads {
             return true;
         }
         m = p.matcher(name);
-        if (m.matches()) {
-            return true;
-        }
-            return false;
+        return m.matches();
     }
 
     public synchronized void calculateCountOfSubDirectories(File file) {
         File[] list = file.listFiles();
         if (list != null)
             for (File fil : list) {
+                if (accept(fil.getName())) {
+                    countOfMathFiles++;
+                }
+                if (fil.length() > size) {
+                    countOfBigFiles++;
+                }
                 if (fil.isDirectory()) {
 //                    System.out.println(true);
                     countOfSubDirectories++;
@@ -57,45 +63,46 @@ public class TaskManagerWithoutThreads {
     }
 
 
+//
+//    public synchronized void calculateCountOfBigFiles(double size, File file) {
+//        File[] list = file.listFiles();
+//        if (list != null)
+//            for (File fil : list) {
+//                if (fil.length() > size) {
+//                    countOfBigFiles++;
+//                }
+//                if (fil.isDirectory()) {
+//                   // System.out.println(true);
+//                    calculateCountOfBigFiles(size, fil);
+//                }
+//
+//            }
+//    }
+//
+//    public synchronized void SearchByPattern(File topDirectory) {
+//        File[] list = topDirectory.listFiles();
+//        if (list != null) {
+//            for (int i = 0; i < list.length; i++) {
+//    //            System.out.println(list[i].getName());
+//
+//                if (list[i].isDirectory()) {
+//                    if (accept(list[i].getName())) {
+//                        countOfMathFiles++;
+//
+//                    }
+//                    SearchByPattern(list[i]);
+//
+//                } else {
+//                    if (accept(list[i].getName())) {
+//                        countOfMathFiles++;
+//                    }
+//                }
+//            }
+//        }
+//        else {
+//            return;
+//        }
+//    }
 
-    public synchronized void calculateCountOfBigFiles(double size, File file) {
-        File[] list = file.listFiles();
-        if (list != null)
-            for (File fil : list) {
-                if (fil.length() > size) {
-                    countOfBigFiles++;
-                }
-                if (fil.isDirectory()) {
-                   // System.out.println(true);
-                    calculateCountOfBigFiles(size, fil);
-                }
-
-            }
-    }
-
-    public synchronized void SearchByPattern(File topDirectory) {
-        File[] list = topDirectory.listFiles();
-        if (list != null) {
-            for (int i = 0; i < list.length; i++) {
-    //            System.out.println(list[i].getName());
-
-                if (list[i].isDirectory()) {
-                    if (accept(list[i].getName())) {
-                        countOfMathFiles++;
-
-                    }
-                    SearchByPattern(list[i]);
-
-                } else {
-                    if (accept(list[i].getName())) {
-                        countOfMathFiles++;
-                    }
-                }
-            }
-        }
-        else {
-            return;
-        }
-    }
 }
 

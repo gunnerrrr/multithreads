@@ -14,26 +14,15 @@ public class TaskManager {
 
     private Pattern p;
     private Matcher m = null;
-    private File file=null;
-    private double size=0;
+    private double size;
     public static List<Thread> threads = new ArrayList<>();
 
 
-    public File getFile() {
-        return file;
-    }
 
-
-    public double getSize() {
-        return size;
-    }
-
-
-    public TaskManager(Pattern p, File file,double size) {
+    public TaskManager(Pattern p, double size) {
 
         this.p = p;
-        this.file=file;
-        this.size=size;
+        this.size = size;
     }
 
 
@@ -54,24 +43,19 @@ public class TaskManager {
     }
 
 
-
     private synchronized boolean accept(String name) {
         if (p == null) {
             return true;
         }
         m = p.matcher(name);
-        if (m.matches()) {
-            return true;
-        }
-            return false;
+        return m.matches();
     }
 
-    public synchronized void calculateCountOfSubDirectories(File file, Thread thread, ArrayList<Thread> threads) throws InterruptedException {
-        System.out.println(thread.getName()+thread.getState()+thread.isAlive());
+    public void calculate(File file, Thread thread, ArrayList<Thread> threads) {
+        System.out.println(thread.getName() + thread.getState() + thread.isAlive());
         thread.start();
-        this.threads.add(thread);
-        System.out.println(thread.getName()+thread.getState()+thread.isAlive());
-//        threadMonitor.repaint(threads.size());
+        TaskManager.threads.add(thread);
+        System.out.println(thread.getName() + thread.getState() + thread.isAlive());
         File[] list = file.listFiles();
         if (list != null) {
             for (File fil : list) {
@@ -85,12 +69,11 @@ public class TaskManager {
                 if (fil.isDirectory()) {
                     countOfSubDirectories++;
                     boolean isFreeThread = false;
-                    Thread newThread = null;
-                    //Map<Integer,Integer> map =new HashMap<>();
+                    Thread newThread;
                     for (int i = 0; i < threads.size(); i++) {
                         if (!(threads.get(i).isAlive()) && threads.get(i).getState() != Thread.State.TERMINATED) {
                             isFreeThread = true;
-                            calculateCountOfSubDirectories(fil, threads.get(i),threads);
+                            calculate(fil, threads.get(i), threads);
                             break;
                         }
                     }
@@ -98,15 +81,16 @@ public class TaskManager {
                         newThread = new Thread();
                         newThread.setName("Thread #" + threads.size());
                         threads.add(newThread);
-                        calculateCountOfSubDirectories(fil, newThread, threads);
+                        calculate(fil, newThread, threads);
                     }
 
                 }
 
             }
         }
-        else return;
     }
+}
+
 
 //    private void CreateNewThread(int maxCountOfThreads) throws InterruptedException {
 //        if(MyThread.countOfThreads<maxCountOfThreads) {
@@ -120,43 +104,43 @@ public class TaskManager {
 //            System.out.println("Now works " + thread.getName());
 //        }
 //    }
-
-    public synchronized void calculateCountOfBigFiles(double size, File file) throws InterruptedException {
-        File[] list = file.listFiles();
-        if (list != null)
-            for (File fil : list) {
-                if (fil.length() > size) {
-                    countOfBigFiles++;
-                }
-                if (fil.isDirectory()) {
-
-//                    CreateNewThread(maxCountOfThreads);
-                    calculateCountOfBigFiles(size, fil);
-                }
-
-            }
-    }
-
-    public synchronized void SearchByPattern(File topDirectory) throws InterruptedException {
-        File[] list = topDirectory.listFiles();
-        if (list != null) {
-            for (int i = 0; i < list.length; i++) {
-               // System.out.println(list[i].getName());
-
-                if (list[i].isDirectory()) {
-                    if (accept(list[i].getName())) {
-                        countOfMathFiles++;
-                    }
-//                CreateNewThread(maxCountOfThreads);
-                    SearchByPattern(list[i]);
-
-                } else {
-                    if (accept(list[i].getName())) {
-                        countOfMathFiles++;
-                    }
-                }
-            }
-        }
-    }
-}
+//
+//    public synchronized void calculateCountOfBigFiles(double size, File file) throws InterruptedException {
+//        File[] list = file.listFiles();
+//        if (list != null)
+//            for (File fil : list) {
+//                if (fil.length() > size) {
+//                    countOfBigFiles++;
+//                }
+//                if (fil.isDirectory()) {
+//
+////                    CreateNewThread(maxCountOfThreads);
+//                    calculateCountOfBigFiles(size, fil);
+//                }
+//
+//            }
+//    }
+//
+//    public synchronized void SearchByPattern(File topDirectory) throws InterruptedException {
+//        File[] list = topDirectory.listFiles();
+//        if (list != null) {
+//            for (int i = 0; i < list.length; i++) {
+//               // System.out.println(list[i].getName());
+//
+//                if (list[i].isDirectory()) {
+//                    if (accept(list[i].getName())) {
+//                        countOfMathFiles++;
+//                    }
+////                CreateNewThread(maxCountOfThreads);
+//                    SearchByPattern(list[i]);
+//
+//                } else {
+//                    if (accept(list[i].getName())) {
+//                        countOfMathFiles++;
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 

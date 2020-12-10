@@ -3,6 +3,7 @@ package TaskLab4;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 //Потрібно реалізувати програмний додаток з використанням потоків. Продемонструвати створення потоків 2 способами.  Програмний додаток повинен відповідати наступним вимогам.
@@ -24,13 +25,21 @@ import java.util.regex.Pattern;
 public class Main  {
 
     public static void main(String[] args) throws InterruptedException {
+        //        Pattern pattern= Pattern.compile(".+jpg$");
+
+
+        System.out.println("Введіть шаблон:\n");
+        Scanner scanner=new Scanner(System.in);
+        String text= scanner.nextLine();
+        Pattern pattern=Pattern.compile(text);
+        System.out.println("Enter your length of file:\n");
+        scanner=new Scanner(System.in);
+        double maxSize=scanner.nextDouble();
+
+        File file=new File(String.valueOf(Paths.get("C:\\Users\\Admin")));
+        ArrayList<Thread> threads = new ArrayList<>();
         Thread t = new Thread(new ThreadMonitor());
         t.start();
-
-        Pattern pattern= Pattern.compile(".+jpg$");
-        File file=new File(String.valueOf(Paths.get("C:\\Users\\Admin")));
-        double maxSize=100000000;
-        ArrayList<Thread> threads = new ArrayList<>();
         int maxCountOfThreads=100;
 
         for(int i=0;i<maxCountOfThreads;i++) {
@@ -39,13 +48,10 @@ public class Main  {
             threads.add(thread);
         }
 
-        TaskManager taskManager = new TaskManager(pattern,file,maxSize);
+        TaskManager taskManager = new TaskManager(pattern,maxSize);
         long startTime = System.currentTimeMillis();
-//        ThreadMonitor threadMonitor=new ThreadMonitor(threads,threads.size());
-//        threadMonitor.start();
-        taskManager.calculateCountOfSubDirectories(file,threads.get(0),threads);
-//        taskManager.calculateCountOfBigFiles(maxSize,threads.get(0),threads);
-//        taskManager.SearchByPattern(file,threads.get(0),threads);
+
+        taskManager.calculate(file,threads.get(0),threads);
         long endTime = System.currentTimeMillis();
         System.out.println("Total execution time: " + (endTime-startTime) + "ms");
         t.interrupt();
@@ -53,19 +59,9 @@ public class Main  {
 
 
         Thread thread=new Thread();
-        thread.sleep(1000);
+        Thread.sleep(1000);
         System.out.println(TaskManager.getCountOfSubDirectories()+" "+TaskManager.getCountOfBigFiles()+" "+ TaskManager.getCountOfMathFiles());
 
-//        FindFile ff = new FindFile();
-//        Scanner scan = new Scanner(System.in);
-//        System.out.println("Enter the file to be searched.. " );
-//        String name = scan.next();
-//        System.out.println("Enter the directory where to search ");
-//        String directory = scan.next();
-//        ff.findFile(name,new File(directory));
     }
-
-
-
 }
 
